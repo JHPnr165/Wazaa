@@ -20,9 +20,13 @@ import ui.MainUi;
 public class WazaaGetFile implements Runnable {
 	private static final String CRLF = "\r\n";
 	private Socket socket;
+	//IP of machine from where you download the file.
 	private InetAddress address;
+	//Port number of machine where you download the file.
 	private int port;
+	//File name you download.
 	private String fileName;
+	//GUI reference.
 	private MainUi ui;
 
 	/**
@@ -53,6 +57,7 @@ public class WazaaGetFile implements Runnable {
 			out.flush();
 			receiveFile();
 			out.close();
+			socket.close();
 		} catch (IOException e) {
 			ui.addInfo("Couldn't connect to machine to download the file!\n");
 		}
@@ -70,7 +75,7 @@ public class WazaaGetFile implements Runnable {
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			line = br.readLine();
 			if(line.endsWith("200 OK")) {
-				while(!line.equals("")) { //Skipime mõtetu infi (muu headeri).
+				while(!line.equals("")) { //Skipime mõtetu infi mille saatja võib panna (muu headeri).
 					line = br.readLine();
 				}
 

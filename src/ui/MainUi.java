@@ -50,7 +50,7 @@ public class MainUi extends JFrame {
 	private JPanel resultPanel = new JPanel();
 	private JPanel getPanel = new JPanel();
 
-	private int requestNumber = 1;
+	private int requestNumber = 0;
 
 	/**
 	 * Constructor.
@@ -164,8 +164,7 @@ public class MainUi extends JFrame {
 	 * @param infoToAdd Text that will be added to infoField.
 	 */
 	public void addInfo(String infoToAdd) {
-		String currentInfo = infoField.getText();
-		infoField.setText(currentInfo + infoToAdd);
+		infoField.setText(infoField.getText() + infoToAdd);
 	}
 
 	/**
@@ -174,8 +173,7 @@ public class MainUi extends JFrame {
 	 * @param result File search results.
 	 */
 	public void addSearchResult(String result) {
-		String tmp = fileField.getText();
-		fileField.setText(tmp + result);
+		fileField.setText(fileField.getText() + result);
 	}
 
 	/**
@@ -212,9 +210,7 @@ public class MainUi extends JFrame {
 	 * @return Returns request number.
 	 */
 	public String getRequestIndex() {
-		String requestIndex = "#" + requestNumber + ": ";
-		requestNumber++;
-		return requestIndex;
+		return "#" + requestNumber++ + ": ";
 	}
 
 	/**

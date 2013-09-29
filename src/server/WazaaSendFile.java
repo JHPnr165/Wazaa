@@ -16,7 +16,9 @@ import ui.MainUi;
  */
 public class WazaaSendFile {
 	private final static String CRLF = "\r\n";
+	//Gui reference.
 	private MainUi ui;
+	//File that will be sent.
 	private File file;
 
 	/**
@@ -38,13 +40,14 @@ public class WazaaSendFile {
 	private void sendBytes(FileInputStream fis, OutputStream os)
 			throws Exception {
 		byte[] buffer = new byte[1024];
-		while ((fis.read(buffer)) != -1) {
+		while ((fis.read(buffer)) != -1) { //Is it end of the world...file.
 			os.write(buffer, 0, buffer.length);
 		}
 	}
 
 	/**
 	 * Method to get content-type.
+	 * Basically pointless because it's not for the browsers. Too lazy to delete it :)
 	 * 
 	 * @param fileName
 	 * @return
@@ -93,7 +96,7 @@ public class WazaaSendFile {
 						+ (new Integer(fis.available())).toString() + CRLF;
 			} else {
 				statusLine = "HTTP/1.0 404 Not Found" + CRLF;
-				contentTypeLine = "Content-type: text/html" + CRLF;
+				contentTypeLine = "Content-type: text/html" + CRLF;     //In case client is using browser.
 				entityBody = "<html>"                                   //In case client is using browser.
 						+ "<head><title>Wazaa is unhappy :(</title></head>"
 						+ "<body>I'm sorry! I searched and searched...but didn't find the file :("

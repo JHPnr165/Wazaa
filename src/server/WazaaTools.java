@@ -13,7 +13,7 @@ import java.util.Enumeration;
  */
 public class WazaaTools {
 	/**
-	 * Constructor. Not needed.
+	 * Constructor.
 	 */
 	public WazaaTools() {}
 
@@ -26,7 +26,7 @@ public class WazaaTools {
 		String localAddress = "";
 		try {
 			localAddress = InetAddress.getLocalHost().getHostAddress();
-			if(localAddress.contains("/")) { //Windows gives machine name with IP address.
+			if(localAddress.contains("/")) { //Some machines give machine name with IP address.
 				localAddress = localAddress.substring(localAddress.indexOf("/") + 1);
 			}
 			//If there are multiple interfaces it can give loopback

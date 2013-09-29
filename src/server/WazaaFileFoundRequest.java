@@ -16,11 +16,17 @@ import ui.MainUi;
  */
 public class WazaaFileFoundRequest extends WazaaTools {
 	private final static String CRLF = "\r\n";
+	//GUI reference.
 	private MainUi ui;
+	//Request body.
 	private String body;
+	//Request headers.
 	private String headers;
+	//Request body in chars.
 	private char[] chars;
+	//Machine that made search request.
 	private Machine requestingMachine;
+	//File names that were found and will be sent.
 	private ArrayList<String> filesToSend;
 
 	public WazaaFileFoundRequest(MainUi ui) {
@@ -41,7 +47,7 @@ public class WazaaFileFoundRequest extends WazaaTools {
 	}
 
 	/**
-	 * Method that creates filefound request.
+	 * Method that creates body and headers for filefound request.
 	 */
 	private void makeRequest() {
 		body = "{\"id\":\"lamp\",\"files\":[";

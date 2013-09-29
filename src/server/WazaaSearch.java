@@ -21,17 +21,28 @@ import ui.MainUi;
  */
 public class WazaaSearch extends WazaaTools implements Runnable {
 	private MainUi ui;
+	//Files that are in Wazaa folder.
 	private ArrayList<String> filesInFolder = new ArrayList<String>();
+	//File names that matched search request and will be sent.
 	private ArrayList<String> filesToSend = new ArrayList<String>();
+	//Machines that are in database.
 	private ArrayList<Machine> machines = new ArrayList<Machine>();
+	//Machines to not to forward search request.
 	private ArrayList<Machine> machinesToDelete = new ArrayList<Machine>();
+	//File name to search from Wazaa folder.
 	private String requestFileName = "";
+	//Pointless parameter...but voices from higher levels ordered to put :D
 	private String id = "lamp";
+	//Search request that will be sent.
 	private String requestToSend;
+	//Received search request.
 	private String request;
 	private final static String CRLF = "\r\n";
+	//Time to live parameter.
 	private int ttl = 1;
+	//Current machine port number.
 	private int myPort = 0;
+	//Machine that made search request.
 	private Machine requestingMachine;
 
 	/**
@@ -121,9 +132,9 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	 * Method to check if file exists.
 	 */
 	private void checkFileExistence() {
-		for(String aFilesInFolder : filesInFolder) {
-			if(aFilesInFolder.contains(requestFileName)) {
-				filesToSend.add(aFilesInFolder);
+		for(String file : filesInFolder) {
+			if(file.contains(requestFileName)) {
+				filesToSend.add(file);
 			}
 		}
 		if(filesToSend.size() > 0) {
@@ -140,7 +151,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 				if(machineToDelete.equals(machine)) {
 					machines.remove(machine);
 					if (machines.isEmpty()) {
-						break;  //Hangs if there is no break if machines list becomes empty.
+						break;  //Wazaa will be very sad and hangs if it will become empty.
 					}
 				}
 			}
@@ -172,6 +183,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	}
 
 	/**
+	 * Using String operations...just to make your eyes flicker :)
 	 * Get request parameters from search request except noask addresses.
 	 */
 	private void parseRequest() {
@@ -265,6 +277,13 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 		} catch(Exception e) {
 			ui.addInfo("Masinate info importimine failist ebaõnnestus!\n");
 		}
+	}
+
+	/**
+	 * Method to download machines info from file in web.
+	 */
+	private void downloadMachines() {
+		//TODO
 	}
 
 	/**
