@@ -50,7 +50,8 @@ public class MainUi extends JFrame {
 	private JPanel resultPanel = new JPanel();
 	private JPanel getPanel = new JPanel();
 
-	private int requestNumber = 0;
+	//Variable to count requests.
+	private int requestNumber = 1;
 
 	/**
 	 * Constructor.
@@ -62,6 +63,7 @@ public class MainUi extends JFrame {
 		this.setTitle("Wazaa!");
 		this.setVisible(true);
 
+		//Server control area.
 		disconnectButton.setEnabled(false);
 		connectButton.addActionListener(new ConnectActionListener());
 		disconnectButton.addActionListener(new DisconnectActionListener());
@@ -77,6 +79,7 @@ public class MainUi extends JFrame {
 		serverPanel.add(disconnectButton);
 		serverPanel.add(serverRunningLabel);
 
+		//File search area.
 		fileNameField.setPreferredSize(new Dimension(240, 25));
 		filePanel.setBackground(Color.GREEN);
 		fileLabel.setForeground(Color.WHITE);
@@ -94,6 +97,7 @@ public class MainUi extends JFrame {
 		filePanel.add(ttlSpinner);
 		filePanel.add(findButton);
 
+		//File search answers area.
 		fileField.setEditable(false);
 		fileField.setText("Search results:\n");
 		fileField.setBackground(Color.GREEN);
@@ -106,6 +110,7 @@ public class MainUi extends JFrame {
 		resultPanel.setForeground(Color.WHITE);
 		resultPanel.add(filePane);
 
+		//Server info area.
 		infoField.setEditable(false);
 		infoField.setText("Server log:\n");
 		infoField.setBackground(Color.GREEN);
@@ -118,6 +123,7 @@ public class MainUi extends JFrame {
 		infoPanel.setForeground(Color.WHITE);
 		infoPanel.add(scrollPane);
 
+		//File download area.
 		getAddressField.setPreferredSize(new Dimension(120, 25));
 		getAddressField.setToolTipText("Siia sisesta masina IP aadress kust tahad faili alla laadida");
 		getAddressLabel.setBackground(Color.GREEN);
@@ -141,6 +147,7 @@ public class MainUi extends JFrame {
 		getPanel.add(getFileNameField);
 		getPanel.add(getButton);
 
+		//Add all panels to main panel.
 		mainPanel.setBackground(Color.GREEN);
 		mainPanel.add(serverPanel);
 		mainPanel.add(infoPanel);
@@ -204,10 +211,10 @@ public class MainUi extends JFrame {
 	}
 
 	/**
-	 * Method that calculates how many requests have been made. Just for helping to separate
+	 * Method that counts how many requests have been made. Just for helping to separate
 	 * different requests in infoField. Doesn't count received fileFoundRequest.
 	 * 
-	 * @return Returns request number.
+	 * @return Returns String "#n: " where n is number.
 	 */
 	public String getRequestIndex() {
 		return "#" + requestNumber++ + ": ";
