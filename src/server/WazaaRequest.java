@@ -93,6 +93,8 @@ public class WazaaRequest implements Runnable {
 				}
 			} else if(method.equals("POST") && isValid(request)) {
 				if(request.startsWith("/foundfile")) {
+					ui.addInfo(ui.getRequestIndex() + socket.getInetAddress().toString().substring(1) 
+							+ " sent file names it found.\n");
 					WazaaFileFoundRequest found = new WazaaFileFoundRequest(ui);
 					found.processRequest(br);
 					break;

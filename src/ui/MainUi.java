@@ -212,7 +212,7 @@ public class MainUi extends JFrame {
 
 	/**
 	 * Method that counts how many requests have been made. Just for helping to separate
-	 * different requests in infoField. Doesn't count received fileFoundRequest.
+	 * different requests in infoField.
 	 * 
 	 * @return Returns String "#n: " where n is number.
 	 */

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import ui.MainUi;
 
@@ -90,19 +91,19 @@ public class WazaaFileFoundRequest extends WazaaTools {
 	 * Method to parse body. Extracts info about machines and files from json.
 	 */
 	private void parseBody() {
-		String toPrint;
-		int index = 0;
-		while(body.length() > 30) {
-			index = body.indexOf("\"ip\"", index);
-			toPrint = "IP: " + body.substring(index + 6, body.indexOf(",", index) - 1) + " port: ";
-			index = body.indexOf(",", index);
-			toPrint += body.substring(index + 10, body.indexOf(",", index + 1) - 1);
-			index = body.indexOf(",", index + 1);
-			toPrint += " File name: \"" + body.substring(index + 10, body.indexOf("}", index + 1) - 1) + "\"";
-			index = body.indexOf("}", index);
+		String toPrint = "";
+		StringTokenizer bodyTokenized = new StringTokenizer(body);
+		String tokens = "[],\"{}: ";
+		if(body.length() > 55) {
+			for(int i = 0; i < 3; i++) {bodyTokenized.nextToken(tokens);} //skipping useless beginning
+			while(bodyTokenized.hasMoreTokens()) {
+				toPrint = bodyTokenized.nextToken(tokens) + ": " + bodyTokenized.nextToken(tokens) + " "
+						+ bodyTokenized.nextToken(tokens) + ": " + bodyTokenized.nextToken(tokens) + " "
+						+ bodyTokenized.nextToken(tokens) + ": " + bodyTokenized.nextToken(tokens) + "\n";
+			}
 			ui.addSearchResult(toPrint + "\n");
-			body = body.substring(index);
-			index = 0;
+		} else {
+			ui.addInfo(ui.getRequestIndex() + "Filefound request body that was received has wrong length!\n");
 		}
 	}
 

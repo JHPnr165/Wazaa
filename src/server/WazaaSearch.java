@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import ui.MainUi;
 
@@ -296,21 +297,14 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 			Machine machine;
 			InetAddress address;
 			int port;
-			machinesString = machinesString.substring(3);
-			int index;
+			String tokens = "[]\",{} ";
+			StringTokenizer machinesTokenized = new StringTokenizer(machinesString);
 			try {
-				while(machinesString.length() > 10) {
-					index = machinesString.indexOf("\"");
-					address = InetAddress.getByName(machinesString.substring(0, index));
-					port = Integer.parseInt(machinesString.substring(
-							index + 3, machinesString.indexOf("\"", index + 3)));
+				while(machinesTokenized.hasMoreTokens()) {
+					address = InetAddress.getByName(machinesTokenized.nextToken(tokens));
+					port = Integer.parseInt(machinesTokenized.nextToken(tokens));
 					machine = new Machine(address, port);
 					machines.add(machine);
-					try {
-						machinesString = machinesString.substring(machinesString.indexOf("]") + 4);
-					} catch(Exception ex) {
-						machinesString = ""; //et lõpmatusse loopi ei jääks
-					}
 				}
 			} catch(Exception e) {
 				ui.addInfo("Ei saa masinate infot kätte! Info vales formaadis!\n");
