@@ -32,4 +32,8 @@ public class Machine {
 	public boolean equals(Machine machine) {
 		return machine.address.equals(this.address);
 	}
+
+	public String toString() {
+		return "address: " + address.toString() + ", port: "+ port;
+	}
 }

@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import ui.MainUi;
 
@@ -88,23 +90,18 @@ public class WazaaFileFoundRequest extends WazaaTools {
 	}
 
 	/**
-	 * Method to parse body. Extracts info about machines and files from json.
+	 * Method to parse body. Extracts info about machines and files from json and prints to GUI.
 	 */
 	private void parseBody() {
 		String toPrint = "";
-		StringTokenizer bodyTokenized = new StringTokenizer(body);
-		String tokens = "[],\"{}: ";
-		if(body.length() > 55) {
-			for(int i = 0; i < 3; i++) {bodyTokenized.nextToken(tokens);} //skipping useless beginning
-			while(bodyTokenized.hasMoreTokens()) {
-				toPrint = bodyTokenized.nextToken(tokens) + ": " + bodyTokenized.nextToken(tokens) + " "
-						+ bodyTokenized.nextToken(tokens) + ": " + bodyTokenized.nextToken(tokens) + " "
-						+ bodyTokenized.nextToken(tokens) + ": " + bodyTokenized.nextToken(tokens) + "\n";
-			}
-			ui.addSearchResult(toPrint + "\n");
-		} else {
-			ui.addInfo(ui.getRequestIndex() + "Filefound request body that was received has wrong length!\n");
+		JSONObject bodyObject = new JSONObject(body);
+		JSONArray arrayOfFiles = bodyObject.getJSONArray("files");
+		for(int i = 0; i < arrayOfFiles.length(); i++) {
+			toPrint += "IP: " + arrayOfFiles.getJSONObject(i).getString("ip")
+					+ " port: " + arrayOfFiles.getJSONObject(i).getString("port")
+					+ " file name: " + arrayOfFiles.getJSONObject(i).getString("name") + "\n";
 		}
+		ui.addSearchResult(toPrint);
 	}
 
 	/**
