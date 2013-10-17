@@ -301,6 +301,15 @@ public class MainUi extends JFrame {
 	}
 
 	/**
+	 * Method to get time to live value set in GUI.
+	 * 
+	 * @return ttl value
+	 */
+	public int getTTL() {
+		return (Integer) ttlSpinner.getValue();
+	}
+
+	/**
 	 * ActionListener Class for getButton.
 	 * 
 	 * @author marko

@@ -51,10 +51,11 @@ public class WazaaGetFile implements Runnable {
 		try {
 			socket = new Socket(address, port);
 			ui.addInfo(ui.getRequestIndex() + "Trying to get file: " + fileName + "...\n");
-			String request = "GET /getfile?fullname=" + fileName + " HTTP/1.0" + CRLF;
+			String request = "GET /getfile?fullname=" + fileName + " HTTP/1.0" + CRLF + CRLF;
 			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 			out.write(request);
 			out.flush();
+			ui.addInfo("Request sent. waiting response...\n");
 			receiveFile();
 			out.close();
 			socket.close();
@@ -74,7 +75,7 @@ public class WazaaGetFile implements Runnable {
 			start = System.currentTimeMillis();
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			line = br.readLine();
-			if(line.endsWith("200 OK")) {
+			if(line.contains("200 OK")) {
 				while(!line.equals("")) { //Skipime mõtetu infi mille saatja võib panna (muu headeri).
 					line = br.readLine();
 				}

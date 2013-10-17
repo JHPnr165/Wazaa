@@ -57,6 +57,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 		this.ui = ui;
 		this.requestFileName = requestFileName;
 		myPort = port;
+		ttl = ui.getTTL();
 	}
 
 	/**
@@ -79,8 +80,8 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 			ui.addInfo("Forwarding filesearch request from: " 
 					+ requestingMachine.address.toString().substring(1) + ":" 
 					+ requestingMachine.port + "\n");
+			generateSearchRequest();
 			sendSearchRequests();
-			ui.addInfo("Forwarding filesearch request completed!\n");
 		}
 		checkFileExistence();
 	}
@@ -123,10 +124,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 		for(Machine machine : machines) {
 			requestToSend += machine.address.toString().substring(1) + "_";
 		}
-		if(myPort == 0) {
-			requestToSend += requestingMachine.address.toString().substring(1) + "_";
-		}
-		requestToSend = requestToSend.substring(0, requestToSend.length() - 1) + " HTTP/1.0" + CRLF;
+		requestToSend += getLocalIp() + " HTTP/1.0" + CRLF + CRLF;
 	}
 
 	/**
@@ -168,7 +166,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 				Machine machineToDelete;
 				InetAddress address;
 				if(!request.contains("_")) {
-					address = InetAddress.getByName(request);
+					address = InetAddress.getByName(request); ////
 					request = "";
 				} else {
 					address = InetAddress.getByName(request.substring(0, request.indexOf("_") - 1));
@@ -215,7 +213,6 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	 */
 	private void sendSearchRequests() {
 		if(!machines.isEmpty()) {
-			generateSearchRequest();
 			for(Machine machine : machines) {
 				sendFileSearchRequest(machine);
 			}
