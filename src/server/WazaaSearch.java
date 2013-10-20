@@ -43,7 +43,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	private String request;
 	private final static String CRLF = "\r\n";
 	//Time to live parameter.
-	private int ttl;
+	private int ttl = 1;
 	//Current machine port number.
 	private int myPort = 0;
 	//Machine that made search request.
@@ -290,11 +290,12 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 			URL url = new URL(fileURL);
 			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
 			String line;
-			while((line = br.readLine()) != null) {
+			while((line = br.readLine()) != null) { //WHY THE FUCK IT READS 2X???????
+				System.out.println("line: " + line);
 				content += line;
 			}
 			br.close();
-			System.out.println(content);
+			parseMachinesString(content);
 		} catch (MalformedURLException e) {
 			ui.addInfo("Faili aadress, mis on internetis, on vale või fail on kustutatud!\n");
 		} catch (IOException e) {
