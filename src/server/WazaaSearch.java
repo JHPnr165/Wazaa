@@ -290,17 +290,17 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 			URL url = new URL(fileURL);
 			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
 			String line;
-			while((line = br.readLine()) != null) { //WHY THE FUCK IT READS 2X???????
-				System.out.println("line: " + line);
+			while((line = br.readLine()) != null) {
 				content += line;
 			}
 			br.close();
-			parseMachinesString(content);
 		} catch (MalformedURLException e) {
 			ui.addInfo("Faili aadress, mis on internetis, on vale või fail on kustutatud!\n");
 		} catch (IOException e) {
 			ui.addInfo("I/O exception!\n");
 		}
+		parseMachinesString(content);
+		deleteDuplicateMachines();
 	}
 
 	/**
@@ -324,6 +324,19 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 				}
 			} catch(Exception e) {
 				ui.addInfo("Ei saa masinate infot kätte! Info vales formaadis!\n");
+			}
+		}
+	}
+
+	/**
+	 * Remove duplicate machines from machines list.
+	 */
+	private void deleteDuplicateMachines() {
+		for(int i = 0; i < machines.size() - 1; i++) {
+			for(int j = i + 1; j < machines.size(); j++) {
+				if(machines.get(i).equals(machines.get(j))) {
+					machines.remove(j);
+				}
 			}
 		}
 	}
