@@ -4,9 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -25,11 +28,11 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	//Files that are in Wazaa folder.
 	private ArrayList<String> filesInFolder = new ArrayList<String>();
 	//File names that matched search request and will be sent.
-	private ArrayList<String> filesToSend = new ArrayList<String>();
+	private ArrayList<String> fileNamesToSend = new ArrayList<String>();
 	//Machines that are in database.
 	private ArrayList<Machine> machines = new ArrayList<Machine>();
 	//Machines to not to forward search request.
-	private ArrayList<Machine> machinesToDelete = new ArrayList<Machine>();
+	private ArrayList<Machine> noAskMachines = new ArrayList<Machine>();
 	//File name to search from Wazaa folder.
 	private String requestFileName = "";
 	//Pointless parameter...but voices from higher levels ordered to put :D
@@ -40,7 +43,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	private String request;
 	private final static String CRLF = "\r\n";
 	//Time to live parameter.
-	private int ttl = 1;
+	private int ttl;
 	//Current machine port number.
 	private int myPort = 0;
 	//Machine that made search request.
@@ -50,8 +53,8 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	 * Constructor. Used if user wants to search file.
 	 * 
 	 * @param ui
-	 * @param requestFileName
-	 * @param port
+	 * @param requestFileName File name to search
+	 * @param port This machine Wazaa port number
 	 */
 	public WazaaSearch(MainUi ui, String requestFileName, int port) {
 		this.ui = ui;
@@ -64,7 +67,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	 * Constructor. Used if other machine sent file search request.
 	 * 
 	 * @param ui
-	 * @param request
+	 * @param request Received search request.
 	 */
 	public WazaaSearch(MainUi ui, String request) {
 		this.ui = ui;
@@ -72,7 +75,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	}
 
 	/**
-	 * 
+	 * Process received search request.
 	 */
 	private void processRequest() {
 		parseRequest();
@@ -91,7 +94,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	 */
 	private void sendFoundRequest() {
 		WazaaFileFoundRequest found = new WazaaFileFoundRequest(ui);
-		found.sendFileFound(filesToSend, requestingMachine);
+		found.sendFileFound(fileNamesToSend, requestingMachine);
 	}
 
 	/**
@@ -118,7 +121,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 				+ "&sendip=" + requestingMachine.address.toString().substring(1) 
 				+ "&sendport=" + requestingMachine.port + "&ttl=" + ttl 
 				+ "&id=" + id + "&noask=";
-		for(Machine machine : machinesToDelete) {
+		for(Machine machine : noAskMachines) {
 			requestToSend += machine.address.toString().substring(1) + "_";
 		}
 		for(Machine machine : machines) {
@@ -133,10 +136,10 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	private void checkFileExistence() {
 		for(String file : filesInFolder) {
 			if(file.contains(requestFileName)) {
-				filesToSend.add(file);
+				fileNamesToSend.add(file);
 			}
 		}
-		if(filesToSend.size() > 0) {
+		if(fileNamesToSend.size() > 0) {
 			sendFoundRequest();
 		}
 	}
@@ -145,7 +148,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	 * Method that deletes machines from list that are in noask list.
 	 */
 	private void deleteNoAskMachines() {
-		for(Machine machineToDelete : machinesToDelete) {
+		for(Machine machineToDelete : noAskMachines) {
 			for(Machine machine : machines) {
 				if(machineToDelete.equals(machine)) {
 					machines.remove(machine);
@@ -173,7 +176,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 					request = request.substring(request.indexOf("_") + 1);
 				}
 				machineToDelete = new Machine(address, myPort);
-				machinesToDelete.add(machineToDelete);
+				noAskMachines.add(machineToDelete);
 			}
 			deleteNoAskMachines();
 		} catch(UnknownHostException e) {
@@ -281,7 +284,22 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	 * Method to download machines info from file in web.
 	 */
 	private void downloadMachines() {
-		//TODO
+		String fileURL = "http://dijkstra.cs.ttu.ee/~t123650/machines.txt";
+		String content = "";
+		try {
+			URL url = new URL(fileURL);
+			BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+			String line;
+			while((line = br.readLine()) != null) {
+				content += line;
+			}
+			br.close();
+			System.out.println(content);
+		} catch (MalformedURLException e) {
+			ui.addInfo("Faili aadress, mis on internetis, on vale või fail on kustutatud!\n");
+		} catch (IOException e) {
+			ui.addInfo("I/O exception!\n");
+		}
 	}
 
 	/**
@@ -313,6 +331,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	public void run() {
 		getMachines();
 		getFileNames();
+		downloadMachines();
 		if(myPort == 0) {
 			processRequest();
 		} else {
