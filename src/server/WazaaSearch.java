@@ -6,10 +6,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -117,6 +120,9 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	 * Method that generates request for searching file.
 	 */
 	private void generateSearchRequest() {
+		try {
+			requestFileName = URLEncoder.encode(requestFileName, "UTF-8");
+		} catch (UnsupportedEncodingException e) {}
 		requestToSend = "GET /searchfile?name=" + requestFileName 
 				+ "&sendip=" + requestingMachine.address.toString().substring(1) 
 				+ "&sendport=" + requestingMachine.port + "&ttl=" + ttl 
@@ -192,6 +198,9 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 		try {
 			requestFileName = request.substring(request.indexOf("name") + 5, request.indexOf(
 					"&", request.indexOf("name")));
+			try {
+				requestFileName = URLDecoder.decode(requestFileName, "UTF-8");
+			} catch (UnsupportedEncodingException e) {}
 			InetAddress machineAddress = InetAddress.getByName(request.substring(
 					request.indexOf("sendip") + 7, request.indexOf("&", request.indexOf("sendip"))));
 			int machinePort = Integer.parseInt(request.substring(

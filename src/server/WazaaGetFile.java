@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URLEncoder;
+
 import ui.MainUi;
 
 /**
@@ -49,6 +51,7 @@ public class WazaaGetFile implements Runnable {
 	 */
 	private void getFile() {
 		try {
+			fileName = URLEncoder.encode(fileName, "UTF-8");
 			socket = new Socket(address, port);
 			ui.addInfo(ui.getRequestIndex() + "Trying to get file: " + fileName + "...\n");
 			String request = "GET /getfile?fullname=" + fileName + " HTTP/1.0" + CRLF + CRLF;
