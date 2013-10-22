@@ -1,14 +1,15 @@
 package server;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 /**
  * Class for methods that several Classes need. To avoid duplicate code.
  * 
- * @author marko
  *
  */
 public class WazaaTools {
@@ -54,5 +55,24 @@ public class WazaaTools {
 			}
 		} catch (UnknownHostException e) {}
 		return localAddress;
+	}
+
+	/**
+	 * Method to get file names from folder.
+	 */
+	public ArrayList<String> getFileNames() {
+		ArrayList<String> filesInFolder = new ArrayList<String>();
+		String path = "./wazaa";
+		File folder = new File(path);
+		File[] listOfFiles = folder.listFiles();
+
+		if (listOfFiles != null) {
+			for(File file : listOfFiles) {
+				if(file.isFile()) {
+					filesInFolder.add(file.getName());
+				}
+			}
+		}
+		return filesInFolder;
 	}
 }

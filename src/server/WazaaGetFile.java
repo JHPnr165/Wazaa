@@ -1,22 +1,21 @@
 package server;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import ui.MainUi;
 
 /**
  * Class for downloading file.
  * 
- * @author marko
  *
  */
 public class WazaaGetFile implements Runnable {
@@ -68,35 +67,73 @@ public class WazaaGetFile implements Runnable {
 	}
 
 	/**
+	 * Method to check if file exists.
+	 * 
+	 * @param fileNameToSave File name to check
+	 * @return True if file name exists.
+	 */
+	private boolean isFileExisting(String fileNameToSave) {
+		ArrayList<String> filesInFolder = new WazaaTools().getFileNames();
+		for(String fileInFolder : filesInFolder) {
+			if(fileInFolder.equals(fileNameToSave)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Creates and returns File object.
+	 * 
+	 * @return
+	 */
+	private File createFile() {
+		File file;
+		if(!isFileExisting(fileName)) {
+			return file = new File("./wazaa/" + fileName);
+		} else {
+			int i = 1;
+			do{
+				try{
+					fileName = fileName.substring(0, fileName.indexOf("(") + 1) + i
+							+ fileName.substring(fileName.indexOf(")"));
+				} catch(Exception e) {
+					fileName = fileName.subSequence(0, fileName.lastIndexOf("."))
+							+"(" + i + ")" + fileName.substring(fileName.lastIndexOf("."));
+				}
+				i++;
+			} while(isFileExisting(fileName));
+			return file = new File("./wazaa/" + fileName);
+		}
+	}
+
+	/**
 	 * Downloads file if it exists.
 	 */
 	private void receiveFile() {
-		long start, time;
-		String line;
-		BufferedReader br;
 		try {
-			start = System.currentTimeMillis();
-			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			line = br.readLine();
+			long start = System.currentTimeMillis();
+			InputStream inputStream = socket.getInputStream();
+			DataInputStream input = new DataInputStream(inputStream);
+			String line = input.readLine();
+
 			if(line.contains("200 OK")) {
 				while(!line.equals("")) { //Skipime mõtetu infi mille saatja võib panna (muu headeri).
-					line = br.readLine();
+					line = input.readLine();
+				}
+				File file = createFile();
+				FileOutputStream output = new FileOutputStream(file);
+				byte[] buffer = new byte[4096];
+				int bufferLength;
+
+				while((bufferLength = input.read(buffer)) != -1) {
+					output.write(buffer, 0, bufferLength);
 				}
 
-				File file = new File("./wazaa/" + fileName);
-				FileOutputStream fos = new FileOutputStream(file);
-
-				byte[] buffer = new byte[1024];
-				InputStream is = socket.getInputStream();
-				int len = 0;
-				while ((len = is.read(buffer)) > 0) {  
-		            fos.write(buffer, 0, len);
-		        }
-
-				time = System.currentTimeMillis() - start;
+				long time = System.currentTimeMillis() - start;
 				ui.addInfo("File received! Time: " + time + " ms\n");
-				is.close();
-				fos.close();
+				inputStream.close();
+				output.close();
 				socket.close();
 			} else {
 				ui.addInfo("File you requested doesn't exist or recieved request is not correct!\n");

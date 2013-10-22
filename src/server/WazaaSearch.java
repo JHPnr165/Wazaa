@@ -1,7 +1,6 @@
 package server;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,7 +22,6 @@ import ui.MainUi;
  * Class that handles file search requests. Sends out requests created by user and forwards
  * other machine requests if necessary (if TTL is big enough).
  * 
- * @author marko
  *
  */
 public class WazaaSearch extends WazaaTools implements Runnable {
@@ -89,6 +87,9 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 			generateSearchRequest();
 			sendSearchRequests();
 		}
+		try {
+			requestFileName = URLDecoder.decode(requestFileName, "UTF-8");
+		} catch (UnsupportedEncodingException e) {}
 		checkFileExistence();
 	}
 
@@ -175,7 +176,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 				Machine machineToDelete;
 				InetAddress address;
 				if(!request.contains("_")) {
-					address = InetAddress.getByName(request); ////
+					address = InetAddress.getByName(request);
 					request = "";
 				} else {
 					address = InetAddress.getByName(request.substring(0, request.indexOf("_") - 1));
@@ -248,23 +249,6 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 		} catch(IOException e) {
 			ui.addInfo("Can't connect to: " + machineToSend.address.toString().substring(1)
 					+ ":" + machineToSend.port + " to send search request\n");
-		}
-	}
-
-	/**
-	 * Method to get file names from folder.
-	 */
-	private void getFileNames() {
-		String path = "./wazaa";
-		File folder = new File(path);
-		File[] listOfFiles = folder.listFiles();
-
-		if (listOfFiles != null) {
-			for(File file : listOfFiles) {
-				if(file.isFile()) {
-					filesInFolder.add(file.getName());
-				}
-			}
 		}
 	}
 
@@ -353,7 +337,7 @@ public class WazaaSearch extends WazaaTools implements Runnable {
 	@Override
 	public void run() {
 		getMachines();
-		getFileNames();
+		filesInFolder = getFileNames();
 		downloadMachines();
 		if(myPort == 0) {
 			processRequest();

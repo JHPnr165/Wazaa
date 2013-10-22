@@ -5,7 +5,6 @@ import java.net.InetAddress;
 /**
  * Class to save information about machines (InetAddress and port number pairs).
  * 
- * @author marko
  *
  */
 public class Machine {

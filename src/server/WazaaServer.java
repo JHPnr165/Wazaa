@@ -8,7 +8,6 @@ import ui.MainUi;
 /**
  * Server Class.
  * 
- * @author marko
  *
  */
 public class WazaaServer implements Runnable {

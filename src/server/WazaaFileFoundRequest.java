@@ -14,7 +14,6 @@ import ui.MainUi;
 /**
  * Class to handle requests that give file names that was found in other machines.
  * 
- * @author marko
  *
  */
 public class WazaaFileFoundRequest extends WazaaTools {

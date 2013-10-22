@@ -1,5 +1,7 @@
 package server;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,7 +13,6 @@ import ui.MainUi;
 /**
  * Class to send requested file.
  * 
- * @author marko
  *
  */
 public class WazaaSendFile {
@@ -39,9 +40,11 @@ public class WazaaSendFile {
 	 */
 	private void sendBytes(FileInputStream fis, OutputStream os)
 			throws Exception {
-		byte[] buffer = new byte[1024];
-		while ((fis.read(buffer)) != -1) { //Is it end of the world...file.
-			os.write(buffer, 0, buffer.length);
+		DataInputStream input = new DataInputStream(fis);
+		byte[] buffer = new byte[4096];
+		int length;
+		while ((length = fis.read(buffer)) != -1) { //Is it end of the world...file.
+			os.write(buffer, 0, length);
 		}
 	}
 
@@ -86,7 +89,7 @@ public class WazaaSendFile {
 			String statusLine = null;
 			String contentTypeLine = null;
 			String entityBody = null;
-			String contentLengthLine = "error" + CRLF;
+			String contentLengthLine = "0" + CRLF;
 			if (fileExists) {
 				ui.addInfo(ui.getRequestIndex() + "Sending file: " + fileName.substring(8) + "...\n");
 				statusLine = "HTTP/1.0 200 OK" + CRLF;
@@ -114,11 +117,13 @@ public class WazaaSendFile {
 			if (fileExists) {
 				sendBytes(fis, output);
 				fis.close();
+				output.close();
 				long time = System.currentTimeMillis() - start;
 				ui.addInfo("File sent! Time: " + time + " ms\n");
 			} else {
 				ui.addInfo("Requested file doesn't exist!\n");
 				output.write(entityBody.getBytes());
+				output.close();
 			}
 		} catch(Exception e) {
 			ui.addInfo("Couldn't send file!\n");
