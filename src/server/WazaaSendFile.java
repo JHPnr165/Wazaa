@@ -1,7 +1,5 @@
 package server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,7 +38,6 @@ public class WazaaSendFile {
 	 */
 	private void sendBytes(FileInputStream fis, OutputStream os)
 			throws Exception {
-		DataInputStream input = new DataInputStream(fis);
 		byte[] buffer = new byte[4096];
 		int length;
 		while ((length = fis.read(buffer)) != -1) { //Is it end of the world...file.
@@ -96,7 +93,7 @@ public class WazaaSendFile {
 				contentTypeLine = "Content-type: " + contentType(fileName)
 						+ CRLF;
 				contentLengthLine = "Content-Length: "
-						+ (new Integer(fis.available())).toString() + CRLF;
+						+ file.length() + CRLF;
 			} else {
 				statusLine = "HTTP/1.0 404 Not Found" + CRLF;
 				contentTypeLine = "Content-type: text/html" + CRLF;     //In case client is using browser.
